@@ -91,18 +91,18 @@
             margin-left: 0;
             border: 1px solid #999;
         }
-        /* Style for Font Awesome icons in Leaflet */
-        .fa-icon {
-            color: white;
-            margin-top: 6px;
-            margin-left: 8px;
+        
+        /* --- NEW: Style to remove icon background --- */
+        .leaflet-div-icon {
+            background: none;
+            border: none;
         }
 
-        /* --- NEW: Mobile Responsive CSS --- */
+        /* --- Mobile Responsive CSS --- */
         @media (max-width: 600px) {
             .map-title {
                 font-size: 16px; /* Smaller font size */
-                left: 10px;      /* Move it away from the right edge */
+                left: 45px;      /* Move it away from the zoom controls */
                 top: 10px;
                 padding: 4px 10px;
             }
@@ -234,7 +234,6 @@
                 const tooltipText = `${place.name} (${distanceStr})`;
 
                 const icon = L.divIcon({
-                    html: `<i class="fa-solid ${place.icon} fa-icon"></i>`,
                     className: `leaflet-div-icon`,
                     iconSize: [30, 42],
                     iconAnchor: [15, 42],
@@ -260,16 +259,16 @@
 
         // --- Add Conference Hotel Marker ---
         const hotelIcon = L.divIcon({
+            className: 'leaflet-div-icon',
+            iconSize: [30, 42],
+            iconAnchor: [15, 42],
+            popupAnchor: [0, -42],
             html: `
                 <div style="font-size: 1.5rem; color: black;">
                     <i class="fa-solid fa-map-marker"></i>
                     <i class="fa-solid fa-building" style="position: absolute; top: 5px; left: 50%; transform: translateX(-50%); color: white; font-size: 0.8rem;"></i>
                 </div>
             `,
-            className: 'leaflet-div-icon',
-            iconSize: [30, 42],
-            iconAnchor: [15, 42],
-            popupAnchor: [0, -42],
         });
         L.marker(hotelCoords, { icon: hotelIcon })
             .bindPopup("<b>Discovery Kartika Plaza Hotel</b><br>Main Conference Site")
