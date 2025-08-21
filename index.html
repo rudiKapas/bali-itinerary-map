@@ -1,642 +1,288 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Road to Bali: Ella USA</title>
+
+    <!-- Leaflet CSS (required for Folium maps) -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+     integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+     crossorigin=""/>
+
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+     integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+     crossorigin=""></script>
+
+    <!-- jQuery and jQuery UI for draggable elements -->
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css" xintegrity="sha512-xh6O/CkQoPOWDdYTDqeRdPCVd1SpvCA9XXcUnZS2FmJNp1coAFzvtCN9BmamE+4aHK8yyUHUSCcJHgXloTyT2A==" crossorigin="anonymous" referrerpolicy="no-referrer"/>
     
-    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
-    
-        <script>
-            L_NO_TOUCH = false;
-            L_DISABLE_3D = false;
-        </script>
-    
-    <style>html, body {width: 100%;height: 100%;margin: 0;padding: 0;}</style>
-    <style>#map {position:absolute;top:0;bottom:0;right:0;left:0;}</style>
-    <script src="https://cdn.jsdelivr.net/npm/leaflet@1.6.0/dist/leaflet.js"></script>
-    <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.js"></script>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.6.0/dist/leaflet.css"/>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css"/>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css"/>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css"/>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.css"/>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/python-visualization/folium/folium/templates/leaflet.awesome.rotate.min.css"/>
-    
-            <meta name="viewport" content="width=device-width,
-                initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-            <style>
-                #map_adfc5336a697ef7c25da0c6acd7f692c {
-                    position: relative;
-                    width: 100.0%;
-                    height: 100.0%;
-                    left: 0.0%;
-                    top: 0.0%;
-                }
-            </style>
-        
+    <!-- Custom CSS for Leaflet icons and map elements -->
+    <style>
+        html, body {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+        #map {
+            width: 100%;
+            height: 100%;
+        }
+        .map-title { 
+            position: fixed; 
+            top: 10px; 
+            left: 50px; 
+            z-index:1000; 
+            font-size:24px; 
+            font-weight: bold;
+            background-color: #ffffff;
+            padding: 5px 15px;
+            border: 2px solid grey;
+            border-radius: 5px;
+            cursor: move;
+            font-family: Arial, sans-serif;
+        }
+        .map-legend {
+            position: fixed;
+            z-index:1000;
+            bottom: 20px;
+            right: 20px;
+            width: 140px;
+            background-color: #ffffff;
+            border: 2px solid grey;
+            border-radius: 5px;
+            padding: 10px;
+            font-size:14px;
+            font-family: Arial, sans-serif;
+            cursor: move;
+        }
+        .map-legend .legend-title {
+            text-align: center;
+            margin-bottom: 5px;
+            font-weight: bold;
+            font-size: 90%;
+        }
+        .map-legend .legend-scale ul {
+            margin: 0;
+            margin-bottom: 5px;
+            padding: 0;
+            list-style: none;
+        }
+        .map-legend .legend-scale ul li {
+            font-size: 80%;
+            list-style: none;
+            margin-left: 0;
+            line-height: 18px;
+            margin-bottom: 2px;
+        }
+        .map-legend ul.legend-labels li span {
+            display: block;
+            float: left;
+            height: 16px;
+            width: 30px;
+            margin-right: 5px;
+            margin-left: 0;
+            border: 1px solid #999;
+        }
+        /* Style for Font Awesome icons in Leaflet */
+        .fa-icon {
+            color: white;
+            margin-top: 6px;
+            margin-left: 8px;
+        }
+
+        /* --- NEW: Mobile Responsive CSS --- */
+        @media (max-width: 600px) {
+            .map-title {
+                font-size: 16px; /* Smaller font size */
+                left: 10px;      /* Move it away from the right edge */
+                top: 10px;
+                padding: 4px 10px;
+            }
+        }
+    </style>
 </head>
 <body>
-    
-    
-            <div class="folium-map" id="map_adfc5336a697ef7c25da0c6acd7f692c" ></div>
-        
-    
-<div id='maptitle' class='map-title'>Road to Bali: Ella USA</div>
-<div id='maplegend' class='map-legend'>
-  <div class='legend-title'>Legend</div>
-  <div class='legend-scale'>
-    <ul class='legend-labels'>
-      <li><span style='background:blue;opacity:0.7;'></span>Day 1</li>
-      <li><span style='background:green;opacity:0.7;'></span>Day 2</li>
-      <li><span style='background:orange;opacity:0.7;'></span>Day 3</li>
-      <li><span style='background:purple;opacity:0.7;'></span>Day 4</li>
-      <li><span style='background:red;opacity:0.7;'></span>Day 5</li>
-      <li><span style='background:black;opacity:0.7;'></span>Conference Site</li>
-    </ul>
-  </div>
-</div>
-<style>
-  .map-title { position: fixed; top: 10px; left: 50px; z-index:9999; font-size:24px;
-               font-weight: bold; background:#fff; padding:6px 14px; border:2px solid #888; border-radius:6px; }
-  .map-legend { position: fixed; z-index:9999; bottom: 20px; right: 20px; width: 160px;
-                background:#fff; border:2px solid #888; border-radius:6px; padding:10px;
-                font-size:14px; font-family: Arial, sans-serif; }
-  .map-legend .legend-title { text-align:center; margin-bottom:6px; font-weight:bold; }
-  .map-legend .legend-scale ul { margin:0; padding:0; list-style:none; }
-  .map-legend .legend-scale ul li { line-height:18px; margin-bottom:3px; }
-  .map-legend ul.legend-labels li span { display:inline-block; height:14px; width:30px; margin-right:6px;
-                                         border:1px solid #999; vertical-align:middle; }
-</style>
-</body>
-<script>
-    
-    
-            var map_adfc5336a697ef7c25da0c6acd7f692c = L.map(
-                "map_adfc5336a697ef7c25da0c6acd7f692c",
-                {
-                    center: [-8.72, 115.17],
-                    crs: L.CRS.EPSG3857,
-                    zoom: 13,
-                    zoomControl: true,
-                    preferCanvas: false,
+
+    <!-- The map container -->
+    <div id="map"></div>
+
+    <!-- The draggable title -->
+    <div id='maptitle' class='map-title'>
+        Road to Bali: Ella USA
+    </div>
+
+    <!-- The draggable legend -->
+    <div id='maplegend' class='map-legend'>
+        <div class='legend-title'>Legend</div>
+        <div class='legend-scale'>
+          <ul class='legend-labels'>
+            <li><span style='background:blue;opacity:0.7;'></span>Day 1</li>
+            <li><span style='background:green;opacity:0.7;'></span>Day 2</li>
+            <li><span style='background:orange;opacity:0.7;'></span>Day 3</li>
+            <li><span style='background:purple;opacity:0.7;'></span>Day 4</li>
+            <li><span style='background:red;opacity:0.7;'></span>Day 5</li>
+            <li><span style='background:black;opacity:0.7;'></span>Conference Site</li>
+          </ul>
+        </div>
+    </div>
+
+    <script>
+        // --- Initialize Draggable Elements ---
+        $(function() {
+            $("#maplegend").draggable({
+                start: function (event, ui) {
+                    $(this).css({ right: "auto", top: "auto", bottom: "auto" });
                 }
-            );
+            });
+            $("#maptitle").draggable();
+        });
 
+        // --- Map Initialization ---
+        const map = L.map('map').setView([-8.72, 115.17], 13);
+
+        // --- Tile Layers ---
+        const esriSatellite = L.tileLayer(
+            'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+                attribution: 'Esri',
+                maxZoom: 18,
+            }
+        ).addTo(map);
+
+        const mapView = L.tileLayer(
+            'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+            }
+        );
+        
+        // --- Itinerary Data ---
+        const hotelCoords = [-8.73, 115.17];
+        const locations = {
+            "Day 1": {
+                color: "blue",
+                places: [
+                    { name: "South Kuta Beachwalk", coords: [-8.721, 115.168], description: "Afternoon discovery walk along the beachfront.", icon: "fa-person-walking" },
+                    { name: "Balangan Cliff", coords: [-8.79, 115.13], description: "Sunset with sweeping views over the surf bay.", icon: "fa-camera-retro" },
+                    { name: "Warung Nikmat", coords: [-8.725, 115.174], description: "Dinner: Homestyle halal Javanese dishes.", icon: "fa-utensils" }
+                ]
+            },
+            "Day 2": {
+                color: "green",
+                places: [
+                    { name: "Taman Hutan Raya Ngurah Rai", coords: [-8.73, 115.19], description: "Morning walk through peaceful mangrove boardwalks.", icon: "fa-tree" },
+                    { name: "Jimbaran Bay (North End)", coords: [-8.758, 115.169], description: "Evening sunset stop near the fish market.", icon: "fa-sun" },
+                    { name: "Ayam Betutu Khas Gilimanuk (Tuban)", coords: [-8.74, 115.18], description: "Dinner: Halal Balinese spiced chicken.", icon: "fa-utensils" }
+                ]
+            },
+            "Day 3": {
+                color: "orange",
+                places: [
+                    { name: "Kedonganan Fish Market", coords: [-8.76, 115.17], description: "Optional early morning visit to a lively fishing port.", icon: "fa-fish" },
+                    { name: "Tegal Wangi Beach", coords: [-8.78, 115.14], description: "Sunset with tide pools & small caves.", icon: "fa-umbrella-beach" },
+                    { name: "Nasi Pedas Ibu Andika", coords: [-8.71, 115.18], description: "Dinner: 24-hour halal-friendly spicy rice buffet.", icon: "fa-utensils" }
+                ]
+            },
+            "Day 4": {
+                color: "purple",
+                places: [
+                    { name: "Badung & Kumbasari Traditional Markets", coords: [-8.657, 115.211], description: "Morning visit to traditional markets in Denpasar.", icon: "fa-basket-shopping" },
+                    { name: "Sindhu Night Market", coords: [-8.69, 115.26], description: "Evening street food exploration in Sanur.", icon: "fa-utensils" }
+                ]
+            },
+            "Day 5": {
+                color: "red",
+                places: [
+                    { name: "Waterblow Nusa Dua", coords: [-8.807, 115.234], description: "Dramatic sea spray views from an easy walkway.", icon: "fa-cloud-showers-heavy" },
+                    { name: "Pantai Geger", coords: [-8.815, 115.225], description: "Quick detour to a quiet white-sand beach.", icon: "fa-umbrella-beach" },
+                    { name: "Nasi Tempong Indra (Legian)", coords: [-8.70, 115.18], description: "Lunch: Halal Javanese with fiery sambal.", icon: "fa-utensils" }
+                ]
+            }
+        };
+
+        // --- Helper Function for Distance Calculation ---
+        function getDistance(coords1, coords2) {
+            const R = 6371; // Radius of the Earth in km
+            const dLat = (coords2[0] - coords1[0]) * Math.PI / 180;
+            const dLon = (coords2[1] - coords1[1]) * Math.PI / 180;
+            const a =
+                Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                Math.cos(coords1[0] * Math.PI / 180) * Math.cos(coords2[0] * Math.PI / 180) *
+                Math.sin(dLon / 2) * Math.sin(dLon / 2);
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+            return R * c; // Distance in km
+        }
+
+        // --- Create Markers and Layers ---
+        const layerGroups = {};
+
+        for (const day in locations) {
+            const dayData = locations[day];
+            const group = L.layerGroup();
             
+            dayData.places.forEach(place => {
+                const distance = getDistance(hotelCoords, place.coords);
+                const distanceStr = `${distance.toFixed(2)} km`;
 
-        
-    
-            var tile_layer_111de62f9cba57dc54b8de7c211367a2 = L.tileLayer(
-                "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
-                {"attribution": "Esri", "detectRetina": false, "maxNativeZoom": 18, "maxZoom": 18, "minZoom": 0, "noWrap": false, "opacity": 1, "subdomains": "abc", "tms": false}
-            ).addTo(map_adfc5336a697ef7c25da0c6acd7f692c);
-        
-    
-            var tile_layer_7dbbdb8a50ad8174810383c1607b9ea7 = L.tileLayer(
-                "https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png",
-                {"attribution": "\u0026copy; \u003ca href=\"http://www.openstreetmap.org/copyright\"\u003eOpenStreetMap\u003c/a\u003e contributors \u0026copy; \u003ca href=\"http://cartodb.com/attributions\"\u003eCartoDB\u003c/a\u003e, CartoDB \u003ca href =\"http://cartodb.com/attributions\"\u003eattributions\u003c/a\u003e", "detectRetina": false, "maxNativeZoom": 18, "maxZoom": 18, "minZoom": 0, "noWrap": false, "opacity": 1, "subdomains": "abc", "tms": false}
-            ).addTo(map_adfc5336a697ef7c25da0c6acd7f692c);
-        
-    
-            var feature_group_83f36782bbb1e3d122bc0036586219fa = L.featureGroup(
-                {}
-            ).addTo(map_adfc5336a697ef7c25da0c6acd7f692c);
-        
-    
-            var marker_77d655db7f08e203e53d8f5f0a3b381e = L.marker(
-                [-8.721, 115.168],
-                {}
-            ).addTo(feature_group_83f36782bbb1e3d122bc0036586219fa);
-        
-    
-            var icon_8258222cec014c3c144f025ed4ad8378 = L.AwesomeMarkers.icon(
-                {"extraClasses": "fa-rotate-0", "icon": "person-walking", "iconColor": "white", "markerColor": "blue", "prefix": "fa"}
-            );
-            marker_77d655db7f08e203e53d8f5f0a3b381e.setIcon(icon_8258222cec014c3c144f025ed4ad8378);
-        
-    
-        var popup_4112238e7150f9f0e022e2f8c9e2cd75 = L.popup({"maxWidth": 240});
+                const popupHtml = `<b>${place.name}</b><br>${place.description}<br><b>Distance from hotel:</b> ${distanceStr}`;
+                const tooltipText = `${place.name} (${distanceStr})`;
 
-        
-            var html_e6ed07c22ca57eb9c8e7fec1e56188f5 = $(`<div id="html_e6ed07c22ca57eb9c8e7fec1e56188f5" style="width: 100.0%; height: 100.0%;"><b>South Kuta Beachwalk</b><br>Afternoon discovery walk along the beachfront.<br><b>Distance from hotel:</b> 1.02 km</div>`)[0];
-            popup_4112238e7150f9f0e022e2f8c9e2cd75.setContent(html_e6ed07c22ca57eb9c8e7fec1e56188f5);
-        
+                const icon = L.divIcon({
+                    html: `<i class="fa-solid ${place.icon} fa-icon"></i>`,
+                    className: `leaflet-div-icon`,
+                    iconSize: [30, 42],
+                    iconAnchor: [15, 42],
+                    popupAnchor: [0, -42],
+                    // This creates the colored marker background
+                    html: `
+                        <div style="font-size: 1.5rem; color: ${dayData.color};">
+                            <i class="fa-solid fa-map-marker"></i>
+                            <i class="fa-solid ${place.icon}" style="position: absolute; top: 5px; left: 50%; transform: translateX(-50%); color: white; font-size: 0.8rem;"></i>
+                        </div>
+                    `,
+                });
 
-        marker_77d655db7f08e203e53d8f5f0a3b381e.bindPopup(popup_4112238e7150f9f0e022e2f8c9e2cd75)
-        ;
+                const marker = L.marker(place.coords, { icon: icon })
+                    .bindPopup(popupHtml)
+                    .bindTooltip(tooltipText);
+                
+                marker.addTo(group);
+            });
+            layerGroups[day] = group;
+            group.addTo(map);
+        }
 
-        
-    
-    
-            marker_77d655db7f08e203e53d8f5f0a3b381e.bindTooltip(
-                `<div>
-                     South Kuta Beachwalk (1.02 km)
-                 </div>`,
-                {"sticky": true}
-            );
-        
-    
-            var marker_3ad8effcbc9834ad66f38279ae5137c8 = L.marker(
-                [-8.79, 115.13],
-                {}
-            ).addTo(feature_group_83f36782bbb1e3d122bc0036586219fa);
-        
-    
-            var icon_2b1374bff41e0f69bc4da93fba7540ff = L.AwesomeMarkers.icon(
-                {"extraClasses": "fa-rotate-0", "icon": "camera-retro", "iconColor": "white", "markerColor": "blue", "prefix": "fa"}
-            );
-            marker_3ad8effcbc9834ad66f38279ae5137c8.setIcon(icon_2b1374bff41e0f69bc4da93fba7540ff);
-        
-    
-        var popup_c59608c134dfda447327755de5227c63 = L.popup({"maxWidth": 240});
+        // --- Add Conference Hotel Marker ---
+        const hotelIcon = L.divIcon({
+            html: `
+                <div style="font-size: 1.5rem; color: black;">
+                    <i class="fa-solid fa-map-marker"></i>
+                    <i class="fa-solid fa-building" style="position: absolute; top: 5px; left: 50%; transform: translateX(-50%); color: white; font-size: 0.8rem;"></i>
+                </div>
+            `,
+            className: 'leaflet-div-icon',
+            iconSize: [30, 42],
+            iconAnchor: [15, 42],
+            popupAnchor: [0, -42],
+        });
+        L.marker(hotelCoords, { icon: hotelIcon })
+            .bindPopup("<b>Discovery Kartika Plaza Hotel</b><br>Main Conference Site")
+            .bindTooltip("Conference Site")
+            .addTo(map);
 
-        
-            var html_68f2b403171d5ab9a44403e0e50f1e32 = $(`<div id="html_68f2b403171d5ab9a44403e0e50f1e32" style="width: 100.0%; height: 100.0%;"><b>Balangan Cliff</b><br>Sunset with sweeping views over the surf bay.<br><b>Distance from hotel:</b> 7.96 km</div>`)[0];
-            popup_c59608c134dfda447327755de5227c63.setContent(html_68f2b403171d5ab9a44403e0e50f1e32);
-        
+        // --- Layer Control ---
+        const baseMaps = {
+            "Satellite View": esriSatellite,
+            "Map View": mapView
+        };
+        L.control.layers(baseMaps, layerGroups).addTo(map);
 
-        marker_3ad8effcbc9834ad66f38279ae5137c8.bindPopup(popup_c59608c134dfda447327755de5227c63)
-        ;
-
-        
-    
-    
-            marker_3ad8effcbc9834ad66f38279ae5137c8.bindTooltip(
-                `<div>
-                     Balangan Cliff (7.96 km)
-                 </div>`,
-                {"sticky": true}
-            );
-        
-    
-            var marker_27253ab6af3bb66fc9938881669b02bb = L.marker(
-                [-8.725, 115.174],
-                {}
-            ).addTo(feature_group_83f36782bbb1e3d122bc0036586219fa);
-        
-    
-            var icon_5c3f18d1eae6db7ae993630f2ff7fc43 = L.AwesomeMarkers.icon(
-                {"extraClasses": "fa-rotate-0", "icon": "utensils", "iconColor": "white", "markerColor": "blue", "prefix": "fa"}
-            );
-            marker_27253ab6af3bb66fc9938881669b02bb.setIcon(icon_5c3f18d1eae6db7ae993630f2ff7fc43);
-        
-    
-        var popup_84c51a66dc48850a657182a119fdc44b = L.popup({"maxWidth": 240});
-
-        
-            var html_670aa51533d9644780a251c18d80ba61 = $(`<div id="html_670aa51533d9644780a251c18d80ba61" style="width: 100.0%; height: 100.0%;"><b>Warung Nikmat</b><br>Dinner: Homestyle halal Javanese dishes.<br><b>Distance from hotel:</b> 0.71 km</div>`)[0];
-            popup_84c51a66dc48850a657182a119fdc44b.setContent(html_670aa51533d9644780a251c18d80ba61);
-        
-
-        marker_27253ab6af3bb66fc9938881669b02bb.bindPopup(popup_84c51a66dc48850a657182a119fdc44b)
-        ;
-
-        
-    
-    
-            marker_27253ab6af3bb66fc9938881669b02bb.bindTooltip(
-                `<div>
-                     Warung Nikmat (0.71 km)
-                 </div>`,
-                {"sticky": true}
-            );
-        
-    
-            var feature_group_e84105ae4bc9a00cf01e874b7caa282d = L.featureGroup(
-                {}
-            ).addTo(map_adfc5336a697ef7c25da0c6acd7f692c);
-        
-    
-            var marker_94360763485083bb12bccff1a743cfec = L.marker(
-                [-8.73, 115.19],
-                {}
-            ).addTo(feature_group_e84105ae4bc9a00cf01e874b7caa282d);
-        
-    
-            var icon_0d63d74d23bc8d708220641d7322d415 = L.AwesomeMarkers.icon(
-                {"extraClasses": "fa-rotate-0", "icon": "tree", "iconColor": "white", "markerColor": "green", "prefix": "fa"}
-            );
-            marker_94360763485083bb12bccff1a743cfec.setIcon(icon_0d63d74d23bc8d708220641d7322d415);
-        
-    
-        var popup_e9b6b775e5eab000a951fe768e7298fa = L.popup({"maxWidth": 240});
-
-        
-            var html_0ca0dd1ff917b8f95cdce6f98e5204c0 = $(`<div id="html_0ca0dd1ff917b8f95cdce6f98e5204c0" style="width: 100.0%; height: 100.0%;"><b>Taman Hutan Raya Ngurah Rai</b><br>Morning walk through peaceful mangrove boardwalks.<br><b>Distance from hotel:</b> 2.20 km</div>`)[0];
-            popup_e9b6b775e5eab000a951fe768e7298fa.setContent(html_0ca0dd1ff917b8f95cdce6f98e5204c0);
-        
-
-        marker_94360763485083bb12bccff1a743cfec.bindPopup(popup_e9b6b775e5eab000a951fe768e7298fa)
-        ;
-
-        
-    
-    
-            marker_94360763485083bb12bccff1a743cfec.bindTooltip(
-                `<div>
-                     Taman Hutan Raya Ngurah Rai (2.20 km)
-                 </div>`,
-                {"sticky": true}
-            );
-        
-    
-            var marker_a1449178150f018a7c77546173dd8a41 = L.marker(
-                [-8.758, 115.169],
-                {}
-            ).addTo(feature_group_e84105ae4bc9a00cf01e874b7caa282d);
-        
-    
-            var icon_5738650645b419067c49f42e5f83e9e0 = L.AwesomeMarkers.icon(
-                {"extraClasses": "fa-rotate-0", "icon": "sun", "iconColor": "white", "markerColor": "green", "prefix": "fa"}
-            );
-            marker_a1449178150f018a7c77546173dd8a41.setIcon(icon_5738650645b419067c49f42e5f83e9e0);
-        
-    
-        var popup_5a101eefcb76d7ec248412c8a71d9322 = L.popup({"maxWidth": 240});
-
-        
-            var html_6e5e3caec807049a358981ec9e04ae94 = $(`<div id="html_6e5e3caec807049a358981ec9e04ae94" style="width: 100.0%; height: 100.0%;"><b>Jimbaran Bay (North End)</b><br>Evening sunset stop near the fish market.<br><b>Distance from hotel:</b> 3.10 km</div>`)[0];
-            popup_5a101eefcb76d7ec248412c8a71d9322.setContent(html_6e5e3caec807049a358981ec9e04ae94);
-        
-
-        marker_a1449178150f018a7c77546173dd8a41.bindPopup(popup_5a101eefcb76d7ec248412c8a71d9322)
-        ;
-
-        
-    
-    
-            marker_a1449178150f018a7c77546173dd8a41.bindTooltip(
-                `<div>
-                     Jimbaran Bay (North End) (3.10 km)
-                 </div>`,
-                {"sticky": true}
-            );
-        
-    
-            var marker_5de9fcf01b0fe3ca5d07dfb24bee2e5a = L.marker(
-                [-8.74, 115.18],
-                {}
-            ).addTo(feature_group_e84105ae4bc9a00cf01e874b7caa282d);
-        
-    
-            var icon_6e62d3577b477f3e03c6c8e9b148a169 = L.AwesomeMarkers.icon(
-                {"extraClasses": "fa-rotate-0", "icon": "utensils", "iconColor": "white", "markerColor": "green", "prefix": "fa"}
-            );
-            marker_5de9fcf01b0fe3ca5d07dfb24bee2e5a.setIcon(icon_6e62d3577b477f3e03c6c8e9b148a169);
-        
-    
-        var popup_c7ef6c92f924766777cd1ba85cb44e3c = L.popup({"maxWidth": 240});
-
-        
-            var html_b23893c1bc503c475021a9cc2657dfde = $(`<div id="html_b23893c1bc503c475021a9cc2657dfde" style="width: 100.0%; height: 100.0%;"><b>Ayam Betutu Khas Gilimanuk (Tuban)</b><br>Dinner: Halal Balinese spiced chicken.<br><b>Distance from hotel:</b> 1.56 km</div>`)[0];
-            popup_c7ef6c92f924766777cd1ba85cb44e3c.setContent(html_b23893c1bc503c475021a9cc2657dfde);
-        
-
-        marker_5de9fcf01b0fe3ca5d07dfb24bee2e5a.bindPopup(popup_c7ef6c92f924766777cd1ba85cb44e3c)
-        ;
-
-        
-    
-    
-            marker_5de9fcf01b0fe3ca5d07dfb24bee2e5a.bindTooltip(
-                `<div>
-                     Ayam Betutu Khas Gilimanuk (Tuban) (1.56 km)
-                 </div>`,
-                {"sticky": true}
-            );
-        
-    
-            var feature_group_cc0eb84ce0a8c24f2d13e737768359a6 = L.featureGroup(
-                {}
-            ).addTo(map_adfc5336a697ef7c25da0c6acd7f692c);
-        
-    
-            var marker_9fc319870e383e5ee4969ab572ba7365 = L.marker(
-                [-8.76, 115.17],
-                {}
-            ).addTo(feature_group_cc0eb84ce0a8c24f2d13e737768359a6);
-        
-    
-            var icon_c8fec609b851e2ac1b6578747df6336a = L.AwesomeMarkers.icon(
-                {"extraClasses": "fa-rotate-0", "icon": "fish", "iconColor": "white", "markerColor": "orange", "prefix": "fa"}
-            );
-            marker_9fc319870e383e5ee4969ab572ba7365.setIcon(icon_c8fec609b851e2ac1b6578747df6336a);
-        
-    
-        var popup_0167b096c66fe3b56afc7bd46bfb8f1e = L.popup({"maxWidth": 240});
-
-        
-            var html_e81b61d6b585cb4b3b137f054ed6f5d7 = $(`<div id="html_e81b61d6b585cb4b3b137f054ed6f5d7" style="width: 100.0%; height: 100.0%;"><b>Kedonganan Fish Market</b><br>Optional early morning visit to a lively fishing port.<br><b>Distance from hotel:</b> 3.32 km</div>`)[0];
-            popup_0167b096c66fe3b56afc7bd46bfb8f1e.setContent(html_e81b61d6b585cb4b3b137f054ed6f5d7);
-        
-
-        marker_9fc319870e383e5ee4969ab572ba7365.bindPopup(popup_0167b096c66fe3b56afc7bd46bfb8f1e)
-        ;
-
-        
-    
-    
-            marker_9fc319870e383e5ee4969ab572ba7365.bindTooltip(
-                `<div>
-                     Kedonganan Fish Market (3.32 km)
-                 </div>`,
-                {"sticky": true}
-            );
-        
-    
-            var marker_d64b2d48c62b4dffb36765b2d2ad3723 = L.marker(
-                [-8.78, 115.14],
-                {}
-            ).addTo(feature_group_cc0eb84ce0a8c24f2d13e737768359a6);
-        
-    
-            var icon_6154d19b4a861235b41ae65bc3b0b6cd = L.AwesomeMarkers.icon(
-                {"extraClasses": "fa-rotate-0", "icon": "umbrella-beach", "iconColor": "white", "markerColor": "orange", "prefix": "fa"}
-            );
-            marker_d64b2d48c62b4dffb36765b2d2ad3723.setIcon(icon_6154d19b4a861235b41ae65bc3b0b6cd);
-        
-    
-        var popup_fcefda5b9f2665f70dff87575e50d289 = L.popup({"maxWidth": 240});
-
-        
-            var html_bb88f4d2d118ec13e5a8b9de5bdc4e21 = $(`<div id="html_bb88f4d2d118ec13e5a8b9de5bdc4e21" style="width: 100.0%; height: 100.0%;"><b>Tegal Wangi Beach</b><br>Sunset with tide pools & small caves.<br><b>Distance from hotel:</b> 6.44 km</div>`)[0];
-            popup_fcefda5b9f2665f70dff87575e50d289.setContent(html_bb88f4d2d118ec13e5a8b9de5bdc4e21);
-        
-
-        marker_d64b2d48c62b4dffb36765b2d2ad3723.bindPopup(popup_fcefda5b9f2665f70dff87575e50d289)
-        ;
-
-        
-    
-    
-            marker_d64b2d48c62b4dffb36765b2d2ad3723.bindTooltip(
-                `<div>
-                     Tegal Wangi Beach (6.44 km)
-                 </div>`,
-                {"sticky": true}
-            );
-        
-    
-            var marker_099ec6bc9ad98817756b31b8abd1b680 = L.marker(
-                [-8.71, 115.18],
-                {}
-            ).addTo(feature_group_cc0eb84ce0a8c24f2d13e737768359a6);
-        
-    
-            var icon_eb432772edf06607b10a2da9767770a4 = L.AwesomeMarkers.icon(
-                {"extraClasses": "fa-rotate-0", "icon": "utensils", "iconColor": "white", "markerColor": "orange", "prefix": "fa"}
-            );
-            marker_099ec6bc9ad98817756b31b8abd1b680.setIcon(icon_eb432772edf06607b10a2da9767770a4);
-        
-    
-        var popup_cf01b3593c6fc163546e4212f6356fcf = L.popup({"maxWidth": 240});
-
-        
-            var html_757bad55d9834ea0b481cae94f5cdce9 = $(`<div id="html_757bad55d9834ea0b481cae94f5cdce9" style="width: 100.0%; height: 100.0%;"><b>Nasi Pedas Ibu Andika</b><br>Dinner: 24-hour halal-friendly spicy rice buffet.<br><b>Distance from hotel:</b> 2.47 km</div>`)[0];
-            popup_cf01b3593c6fc163546e4212f6356fcf.setContent(html_757bad55d9834ea0b481cae94f5cdce9);
-        
-
-        marker_099ec6bc9ad98817756b31b8abd1b680.bindPopup(popup_cf01b3593c6fc163546e4212f6356fcf)
-        ;
-
-        
-    
-    
-            marker_099ec6bc9ad98817756b31b8abd1b680.bindTooltip(
-                `<div>
-                     Nasi Pedas Ibu Andika (2.47 km)
-                 </div>`,
-                {"sticky": true}
-            );
-        
-    
-            var feature_group_f560a222dce1eb05278acd4f51cd3095 = L.featureGroup(
-                {}
-            ).addTo(map_adfc5336a697ef7c25da0c6acd7f692c);
-        
-    
-            var marker_a3d35a7abea9d3daa8f89ac46ae4bd89 = L.marker(
-                [-8.657, 115.211],
-                {}
-            ).addTo(feature_group_f560a222dce1eb05278acd4f51cd3095);
-        
-    
-            var icon_6283463876527f72c5fb046284d7c96a = L.AwesomeMarkers.icon(
-                {"extraClasses": "fa-rotate-0", "icon": "basket-shopping", "iconColor": "white", "markerColor": "purple", "prefix": "fa"}
-            );
-            marker_a3d35a7abea9d3daa8f89ac46ae4bd89.setIcon(icon_6283463876527f72c5fb046284d7c96a);
-        
-    
-        var popup_5998f8a0a48eb949b6af74b0f369e318 = L.popup({"maxWidth": 240});
-
-        
-            var html_9e1b9aba3adf962e54f0be40b1b56b97 = $(`<div id="html_9e1b9aba3adf962e54f0be40b1b56b97" style="width: 100.0%; height: 100.0%;"><b>Badung & Kumbasari Traditional Markets</b><br>Morning visit to traditional markets in Denpasar.<br><b>Distance from hotel:</b> 9.25 km</div>`)[0];
-            popup_5998f8a0a48eb949b6af74b0f369e318.setContent(html_9e1b9aba3adf962e54f0be40b1b56b97);
-        
-
-        marker_a3d35a7abea9d3daa8f89ac46ae4bd89.bindPopup(popup_5998f8a0a48eb949b6af74b0f369e318)
-        ;
-
-        
-    
-    
-            marker_a3d35a7abea9d3daa8f89ac46ae4bd89.bindTooltip(
-                `<div>
-                     Badung & Kumbasari Traditional Markets (9.25 km)
-                 </div>`,
-                {"sticky": true}
-            );
-        
-    
-            var marker_e5af0d739156d8c903d185fc6c1048d5 = L.marker(
-                [-8.69, 115.26],
-                {}
-            ).addTo(feature_group_f560a222dce1eb05278acd4f51cd3095);
-        
-    
-            var icon_0c59da47f5c2e985b38b629b30e703f2 = L.AwesomeMarkers.icon(
-                {"extraClasses": "fa-rotate-0", "icon": "utensils", "iconColor": "white", "markerColor": "purple", "prefix": "fa"}
-            );
-            marker_e5af0d739156d8c903d185fc6c1048d5.setIcon(icon_0c59da47f5c2e985b38b629b30e703f2);
-        
-    
-        var popup_8c98f8f183d0ef403971244a85d32f3c = L.popup({"maxWidth": 240});
-
-        
-            var html_d277163f91146ae053cad5e30f222854 = $(`<div id="html_d277163f91146ae053cad5e30f222854" style="width: 100.0%; height: 100.0%;"><b>Sindhu Night Market</b><br>Evening street food exploration in Sanur.<br><b>Distance from hotel:</b> 10.85 km</div>`)[0];
-            popup_8c98f8f183d0ef403971244a85d32f3c.setContent(html_d277163f91146ae053cad5e30f222854);
-        
-
-        marker_e5af0d739156d8c903d185fc6c1048d5.bindPopup(popup_8c98f8f183d0ef403971244a85d32f3c)
-        ;
-
-        
-    
-    
-            marker_e5af0d739156d8c903d185fc6c1048d5.bindTooltip(
-                `<div>
-                     Sindhu Night Market (10.85 km)
-                 </div>`,
-                {"sticky": true}
-            );
-        
-    
-            var feature_group_294606130a61f0a02eb7896b0f935607 = L.featureGroup(
-                {}
-            ).addTo(map_adfc5336a697ef7c25da0c6acd7f692c);
-        
-    
-            var marker_311fc0c9783825d0b98590858ec9abe4 = L.marker(
-                [-8.807, 115.234],
-                {}
-            ).addTo(feature_group_294606130a61f0a02eb7896b0f935607);
-        
-    
-            var icon_e8d354d787a044ce06cb4f0fb7c108d6 = L.AwesomeMarkers.icon(
-                {"extraClasses": "fa-rotate-0", "icon": "cloud-showers-heavy", "iconColor": "white", "markerColor": "red", "prefix": "fa"}
-            );
-            marker_311fc0c9783825d0b98590858ec9abe4.setIcon(icon_e8d354d787a044ce06cb4f0fb7c108d6);
-        
-    
-        var popup_7e9c86faf2f398f564e4aae96713a5bd = L.popup({"maxWidth": 240});
-
-        
-            var html_243ea1c95d8f75cf72028c7563b244a6 = $(`<div id="html_243ea1c95d8f75cf72028c7563b244a6" style="width: 100.0%; height: 100.0%;"><b>Waterblow Nusa Dua</b><br>Dramatic sea spray views from an easy walkway.<br><b>Distance from hotel:</b> 11.05 km</div>`)[0];
-            popup_7e9c86faf2f398f564e4aae96713a5bd.setContent(html_243ea1c95d8f75cf72028c7563b244a6);
-        
-
-        marker_311fc0c9783825d0b98590858ec9abe4.bindPopup(popup_7e9c86faf2f398f564e4aae96713a5bd)
-        ;
-
-        
-    
-    
-            marker_311fc0c9783825d0b98590858ec9abe4.bindTooltip(
-                `<div>
-                     Waterblow Nusa Dua (11.05 km)
-                 </div>`,
-                {"sticky": true}
-            );
-        
-    
-            var marker_f8c40906db26663bbb9fc190f7c036b8 = L.marker(
-                [-8.815, 115.225],
-                {}
-            ).addTo(feature_group_294606130a61f0a02eb7896b0f935607);
-        
-    
-            var icon_100e1f2d74280e1ac2895286877c4dbb = L.AwesomeMarkers.icon(
-                {"extraClasses": "fa-rotate-0", "icon": "umbrella-beach", "iconColor": "white", "markerColor": "red", "prefix": "fa"}
-            );
-            marker_f8c40906db26663bbb9fc190f7c036b8.setIcon(icon_100e1f2d74280e1ac2895286877c4dbb);
-        
-    
-        var popup_dac4b3da5364841a3077b0a0251799d5 = L.popup({"maxWidth": 240});
-
-        
-            var html_5b499387dba1e3420a4702cfc19d86cd = $(`<div id="html_5b499387dba1e3420a4702cfc19d86cd" style="width: 100.0%; height: 100.0%;"><b>Pantai Geger</b><br>Quick detour to a quiet white-sand beach.<br><b>Distance from hotel:</b> 11.18 km</div>`)[0];
-            popup_dac4b3da5364841a3077b0a0251799d5.setContent(html_5b499387dba1e3420a4702cfc19d86cd);
-        
-
-        marker_f8c40906db26663bbb9fc190f7c036b8.bindPopup(popup_dac4b3da5364841a3077b0a0251799d5)
-        ;
-
-        
-    
-    
-            marker_f8c40906db26663bbb9fc190f7c036b8.bindTooltip(
-                `<div>
-                     Pantai Geger (11.18 km)
-                 </div>`,
-                {"sticky": true}
-            );
-        
-    
-            var marker_6f44684915cac0ca51db63873b37e344 = L.marker(
-                [-8.7, 115.18],
-                {}
-            ).addTo(feature_group_294606130a61f0a02eb7896b0f935607);
-        
-    
-            var icon_e04bbe0254a0e6e957d9c9d132f5b602 = L.AwesomeMarkers.icon(
-                {"extraClasses": "fa-rotate-0", "icon": "utensils", "iconColor": "white", "markerColor": "red", "prefix": "fa"}
-            );
-            marker_6f44684915cac0ca51db63873b37e344.setIcon(icon_e04bbe0254a0e6e957d9c9d132f5b602);
-        
-    
-        var popup_e11f327cf83b491b58565a1acd4aa598 = L.popup({"maxWidth": 240});
-
-        
-            var html_d89fe4738b43b5884e2b6ab25a78d5a0 = $(`<div id="html_d89fe4738b43b5884e2b6ab25a78d5a0" style="width: 100.0%; height: 100.0%;"><b>Nasi Tempong Indra (Legian)</b><br>Lunch: Halal Javanese with fiery sambal.<br><b>Distance from hotel:</b> 3.50 km</div>`)[0];
-            popup_e11f327cf83b491b58565a1acd4aa598.setContent(html_d89fe4738b43b5884e2b6ab25a78d5a0);
-        
-
-        marker_6f44684915cac0ca51db63873b37e344.bindPopup(popup_e11f327cf83b491b58565a1acd4aa598)
-        ;
-
-        
-    
-    
-            marker_6f44684915cac0ca51db63873b37e344.bindTooltip(
-                `<div>
-                     Nasi Tempong Indra (Legian) (3.50 km)
-                 </div>`,
-                {"sticky": true}
-            );
-        
-    
-            var layer_control_eb1762e399f847f3fd75d8cc204e0d9d = {
-                base_layers : {
-                    "Esri Satellite" : tile_layer_111de62f9cba57dc54b8de7c211367a2,
-                    "Map View" : tile_layer_7dbbdb8a50ad8174810383c1607b9ea7,
-                },
-                overlays :  {
-                    "Day 1" : feature_group_83f36782bbb1e3d122bc0036586219fa,
-                    "Day 2" : feature_group_e84105ae4bc9a00cf01e874b7caa282d,
-                    "Day 3" : feature_group_cc0eb84ce0a8c24f2d13e737768359a6,
-                    "Day 4" : feature_group_f560a222dce1eb05278acd4f51cd3095,
-                    "Day 5" : feature_group_294606130a61f0a02eb7896b0f935607,
-                },
-            };
-            L.control.layers(
-                layer_control_eb1762e399f847f3fd75d8cc204e0d9d.base_layers,
-                layer_control_eb1762e399f847f3fd75d8cc204e0d9d.overlays,
-                {"autoZIndex": true, "collapsed": true, "position": "topright"}
-            ).addTo(map_adfc5336a697ef7c25da0c6acd7f692c);
-            tile_layer_7dbbdb8a50ad8174810383c1607b9ea7.remove();
-        
-    
-            var marker_279e64d2fc93e98e5f61a514dc20b8d6 = L.marker(
-                [-8.73, 115.17],
-                {}
-            ).addTo(map_adfc5336a697ef7c25da0c6acd7f692c);
-        
-    
-            var icon_8c2f4e14b829a1b5489a3bd80201358f = L.AwesomeMarkers.icon(
-                {"extraClasses": "fa-rotate-0", "icon": "building", "iconColor": "white", "markerColor": "black", "prefix": "fa"}
-            );
-            marker_279e64d2fc93e98e5f61a514dc20b8d6.setIcon(icon_8c2f4e14b829a1b5489a3bd80201358f);
-        
-    
-        var popup_301ab381fd74647f481232a7bfe34aca = L.popup({"maxWidth": 220});
-
-        
-            var html_15adae67e9c7e5deb2550436c601ce72 = $(`<div id="html_15adae67e9c7e5deb2550436c601ce72" style="width: 100.0%; height: 100.0%;"><b>Discovery Kartika Plaza Hotel</b><br>Main Conference Site</div>`)[0];
-            popup_301ab381fd74647f481232a7bfe34aca.setContent(html_15adae67e9c7e5deb2550436c601ce72);
-        
-
-        marker_279e64d2fc93e98e5f61a514dc20b8d6.bindPopup(popup_301ab381fd74647f481232a7bfe34aca)
-        ;
-
-        
-    
-    
-            marker_279e64d2fc93e98e5f61a514dc20b8d6.bindTooltip(
-                `<div>
-                     Conference Site
-                 </div>`,
-                {"sticky": true}
-            );
-        
-</script>
+    </script>
+</body>
 </html>
